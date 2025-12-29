@@ -47,3 +47,16 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# --- Project-specific ignores ---
+
+# data files (don’t commit large/raw datasets)
+data/*.csv
+data/*.xlsx
+data/*.parquet
+data/*.rds
+data/*.zip
+
+# outputs (generated files)
+outputs/**
+
