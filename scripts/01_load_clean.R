@@ -1,20 +1,34 @@
 # scripts/01_load_clean.R
-# Step 1: Load the data + do some light cleaning
+# Step 1: load freMTPL2 data (frequency + severity) and do basic cleaning
 
 library(tidyverse)
 
-# temporary placeholder for the file.
-raw_path <- "data/PUT_DATA_FILE_HERE.csv"
+# If you DON'T have the dataset package yet, run this once in RStudio:
+# install.packages("CASdatasets")
 
-# load data.
-raw = read_csv(raw_path)
+library(CASdatasets)
 
-# quick look of the data.
-glimpse(raw)
+# load the two tables
+data("freMTPL2freq")
+data("freMTPL2sev")
 
-# light cleaning placeholder ( going to edit once we know the real column names)
-clean = raw |>
-  drop_na()   # removes rows with missing values
+# frequency table (policy-level) 
+freq = freMTPL2freq |>
+  mutate(Exposure = as.numeric(Exposure),
+         ClaimNb = as.integer(ClaimNb)) |>
+  filter(!is.na(Exposure), Exposure > 0)
 
-# save a cleaned copy for the next scripts
-write_rds(clean, "data/clean_data.rds")
+# severity table (claim-level) 
+sev <- freMTPL2sev |>
+  mutate(ClaimAmount = as.numeric(ClaimAmount)) |>
+  filter(!is.na(ClaimAmount), ClaimAmount > 0)
+
+# quick sanity check
+glimpse(freq)
+glimpse(sev)
+
+# save locally for the next scripts
+saveRDS(freq, "outputs/freq_clean.rds")
+saveRDS(sev,  "outputs/sev_clean.rds")
+
+cat("Saved: outputs/freq_clean.rds and outputs/sev_clean.rds\n")
